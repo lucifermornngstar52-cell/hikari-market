@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HikariOS — Marketplace</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo" onclick="window.location.href='/'">
+      <div class="logo-icon">◐</div>
+      <span>Hikari<b>OS</b></span>
+    </div>
+    <nav class="nav">
+      <a href="#" class="nav-link active" data-filter="all">Все</a>
+      <a href="#" class="nav-link" data-filter="app">Приложения</a>
+      <a href="#" class="nav-link" data-filter="game">Игры</a>
+      <a href="#" class="nav-link" data-filter="tool">Инструменты</a>
+    </nav>
+    <button class="admin-btn" onclick="toggleAdmin()" title="Управление">⚙️</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Hikari<span class="accent">OS</span> Marketplace</h1>
+  <p>Эксклюзивные приложения и игры от разработчика HikariOS. Скачивай, устанавливай, тестируй.</p>
+  <div class="hero-stats" id="heroStats">
+    <div class="stat"><span class="stat-num" id="statApps">—</span><span class="stat-label">проектов</span></div>
+    <div class="stat"><span class="stat-num" id="statDownloads">—</span><span class="stat-label">загрузок</span></div>
+    <div class="stat"><span class="stat-num" id="statLatest">—</span><span class="stat-label">последний релиз</span></div>
+  </div>
+</section>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel" style="display:none;">
+  <div class="admin-inner">
+    <div class="admin-header">
+      <h2>⚙️ Панель управления</h2>
+      <button class="close-btn" onclick="toggleAdmin()">✕</button>
+    </div>
+    
+    <!-- LOGIN -->
+    <div class="admin-login" id="adminLogin">
+      <div class="admin-tab-row">
+        <button class="admin-tab active" onclick="switchTab('pass')">По паролю</button>
+        <button class="admin-tab" onclick="switchTab('token')">GitHub Token</button>
+      </div>
+      <div id="tabPass">
+        <p>Введите пароль администратора:</p>
+        <input type="password" id="adminPass" placeholder="Пароль" onkeypress="if(event.key==='Enter')adminLogin()">
+        <button class="btn-primary" onclick="adminLogin()">Войти</button>
+      </div>
+      <div id="tabToken" style="display:none;">
+        <p>Введите GitHub Personal Access Token (для загрузки файлов):</p>
+        <input type="password" id="githubToken" placeholder="ghp_..." onkeypress="if(event.key==='Enter')loginWithToken()">
+        <button class="btn-primary" onclick="loginWithToken()">Войти с Token</button>
+      </div>
+      <p class="admin-hint" id="adminHint"></p>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content" id="adminContent" style="display:none;">
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="adminSection('projects')">Проекты</button>
+        <button class="admin-tab" onclick="adminSection('upload')">Загрузить файл</button>
+      </div>
+
+      <!-- PROJECTS SECTION -->
+      <div id="secProjects" class="admin-section active">
+        <h3>Добавить проект</h3>
+        <div class="admin-form">
+          <div class="form-row">
+            <label>Название</label>
+            <input type="text" id="projName" placeholder="Aika Assistant">
+          </div>
+          <div class="form-row">
+            <label>Описание</label>
+            <textarea id="projDesc" placeholder="AI-ассистент для Android..."></textarea>
+          </div>
+          <div class="form-row">
+            <label>Категория</label>
+            <select id="projCategory">
+              <option value="app">Приложение</option>
+              <option value="game">Игра</option>
+              <option value="tool">Инструмент</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Иконка (emoji или URL)</label>
+            <input type="text" id="projIcon" placeholder="🤖 или https://...">
+          </div>
+          <div class="form-row">
+            <label>GitHub репозиторий (user/repo)</label>
+            <input type="text" id="projRepo" placeholder="user/repo">
+          </div>
+          <div class="form-row">
+            <label>Платформы (через запятую)</label>
+            <input type="text" id="projPlatforms" placeholder="android, windows">
+          </div>
+          <div class="form-row">
+            <label>Скриншоты (URL через запятую)</label>
+            <input type="text" id="projShots" placeholder="https://img1.png, https://img2.png">
+          </div>
+          <button class="btn-primary" onclick="addProject()">Добавить</button>
+        </div>
+        <hr class="admin-divider">
+        <h3>Существующие проекты</h3>
+        <div id="adminProjectList"></div>
+      </div>
+
+      <!-- UPLOAD SECTION -->
+      <div id="secUpload" class="admin-section" style="display:none;">
+        <h3>Загрузить файл в релиз</h3>
+        <div class="admin-form">
+          <div class="form-row">
+            <label>Проект / репозиторий</label>
+            <select id="uploadRepo"></select>
+          </div>
+          <div class="form-row">
+            <label>Версия релиза (tag)</label>
+            <input type="text" id="uploadTag" placeholder="v1.0.0">
+          </div>
+          <div class="form-row">
+            <label>Название релиза</label>
+            <input type="text" id="uploadTitle" placeholder="Релиз v1.0.0">
+          </div>
+          <div class="form-row">
+            <label>Описание релиза (опционально)</label>
+            <textarea id="uploadBody" placeholder="Что нового..."></textarea>
+          </div>
+          <div class="form-row">
+            <label>Файл для загрузки</label>
+            <input type="file" id="uploadFile" accept=".apk,.exe,.zip,.ipa,.dmg,.deb,.rpm,.msi,.appimage">
+            <p class="form-hint">Поддерживаются: APK, EXE, ZIP, IPA, DMG, DEB и др.</p>
+          </div>
+          <div id="uploadProgress" style="display:none;">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <p class="form-hint" id="progressText">Загрузка...</p>
+          </div>
+          <button class="btn-primary" onclick="uploadToRelease()">⬆ Создать релиз и загрузить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div class="section-title">
+  <h2>Все проекты</h2>
+  <p>Нажми на карточку для подробностей и скачивания</p>
+</div>
+
+<main class="main">
+  <div class="projects-grid" id="projectsGrid">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Загрузка...</p>
+    </div>
+  </div>
+</main>
+
+<!-- PROJECT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">
+    <div class="logo-icon">◐</div>
+    <span>Hikari<b>OS</b></span>
+  </div>
+  <p>© 2026 HikariOS · Powered by GitHub</p>
+</footer>
+
+<script src="app.js?v=1"></script>
+</body>
+</html>
