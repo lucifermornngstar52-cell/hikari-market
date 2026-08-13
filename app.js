@@ -4,6 +4,39 @@ const GITHUB_OWNER = 'lucifermornngstar52-cell';
 const GITHUB_REPOS = [];
 const ADMIN_PASSWORD = 'hikari2026';
 
+const DEFAULT_PROJECTS = [
+  {
+    id: 'default_aika',
+    name: 'Aika Assistant',
+    desc: 'AI-ассистент для Android с 3D-аватаром, голосовым управлением, доступом к экрану и автоматизацией задач. Live2D и 3D модели, оверлей поверх других приложений, реакции на приложения, самообучение.',
+    category: 'app',
+    icon: '🤖',
+    repo: '',
+    version: 'Скоро выйдет',
+    url: '',
+    date: '2026-08-13T00:00:00Z',
+    downloads: 0,
+    shots: [],
+    auto: false,
+    platforms: ['android']
+  },
+  {
+    id: 'default_airi',
+    name: 'AIRI Assistant',
+    desc: 'AI-ассистент с тёмным UI на Flutter + GPT-4o-mini. Голосовое управление, чат, автоматизация задач, работа с контекстом экрана.',
+    category: 'app',
+    icon: '🌙',
+    repo: '',
+    version: 'Скоро выйдет',
+    url: '',
+    date: '2026-08-13T00:00:00Z',
+    downloads: 0,
+    shots: [],
+    auto: false,
+    platforms: ['android']
+  },
+];
+
 // ===== STATE =====
 let projects = [];
 let currentFilter = 'all';
@@ -94,7 +127,7 @@ function loginWithToken() {
 // ===== LOAD PROJECTS =====
 async function loadProjects() {
   const custom = JSON.parse(localStorage.getItem('hikari_projects') || '[]');
-  projects = [...custom];
+  projects = [...DEFAULT_PROJECTS, ...custom];
 
   for (const repo of GITHUB_REPOS) {
     try {
