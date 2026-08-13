@@ -1,12 +1,7 @@
 // ===== CONFIG =====
 const GITHUB_OWNER = 'lucifermornngstar52-cell';
-const GITHUB_REPOS = [
-  'lucifermornngstar52-cell/aika-assistant',
-  'lucifermornngstar52-cell/airi-assistant',
-  'lucifermornngstar52-cell/clock-angle-game',
-  'lucifermornngstar52-cell/aika-admin'
-];
 
+const GITHUB_REPOS = [];
 const ADMIN_PASSWORD = 'hikari2026';
 
 // ===== STATE =====
