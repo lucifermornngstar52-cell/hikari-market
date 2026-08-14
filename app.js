@@ -1,7 +1,9 @@
 // ===== CONFIG =====
 const GITHUB_OWNER = 'lucifermornngstar52-cell';
 
-const GITHUB_REPOS = [];
+const GITHUB_REPOS = [
+  'lucifermornngstar52-cell/airi-assistant'
+];
 const ADMIN_PASSWORD = 'hikari2026';
 
 const DEFAULT_PROJECTS = [
@@ -23,17 +25,17 @@ const DEFAULT_PROJECTS = [
   {
     id: 'default_airi',
     name: 'AIRI Assistant',
-    desc: 'AI-ассистент с тёмным UI на Flutter + GPT-4o-mini. Голосовое управление, чат, автоматизация задач, работа с контекстом экрана.',
+    desc: 'AI-ассистент на Flutter с двумя персонажами: милая AIRI и J.A.R.V.I.S. в стиле Iron Man. Live2D модели в чате, определение эмоций через камеру, голосовое управление, память о пользователе, дневник настроения, поиск в интернете, запуск приложений, напоминания, погода, конвертер валют. Android APK + Windows EXE.',
     category: 'app',
     icon: '🌙',
-    repo: '',
-    version: 'Скоро выйдет',
+    repo: 'lucifermornngstar52-cell/airi-assistant',
+    version: 'v1.1.0',
     url: '',
-    date: '2026-08-13T00:00:00Z',
+    date: '2026-08-14T00:00:00Z',
     downloads: 0,
     shots: [],
     auto: false,
-    platforms: ['android']
+    platforms: ['android', 'windows']
   },
 ];
 
