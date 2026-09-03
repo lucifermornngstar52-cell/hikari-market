@@ -2,7 +2,6 @@
 const GITHUB_OWNER = 'lucifermornngstar52-cell';
 
 const GITHUB_REPOS = [
-  'lucifermornngstar52-cell/airi-assistant',
   'lucifermornngstar52-cell/aika-assistant'
 ];
 const ADMIN_PASSWORD = 'hikari2026';
@@ -13,7 +12,7 @@ const DEFAULT_PROJECTS = [
     name: 'Aika Assistant',
     desc: 'AI-ассистент для Android с 3D-аватаром, голосовым управлением, доступом к экрану и автоматизацией задач. Live2D и 3D модели, оверлей поверх других приложений, реакции на приложения, самообучение.',
     category: 'app',
-    icon: '🤖',
+    icon: 'img/aika_icon.png',
     repo: 'lucifermornngstar52-cell/aika-assistant',
     version: 'build-1310',
     url: 'https://github.com/lucifermornngstar52-cell/aika-assistant/releases/download/build-1310/aika-assistant-build1310.apk',
@@ -76,8 +75,6 @@ function adminSection(sec) {
   document.querySelectorAll('.admin-tabs .admin-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
   document.getElementById('secProjects').style.display = sec === 'projects' ? 'block' : 'none';
-  document.getElementById('secUpload').style.display = sec === 'upload' ? 'block' : 'none';
-  if (sec === 'upload') populateUploadRepos();
 }
 
 function toggleAdmin() {
@@ -93,7 +90,6 @@ function adminLogin() {
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminContent').style.display = 'block';
     renderAdminProjects();
-    populateUploadRepos();
   } else {
     document.getElementById('adminHint').textContent = '❌ Неверный пароль';
   }
@@ -116,7 +112,6 @@ function loginWithToken() {
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminContent').style.display = 'block';
         renderAdminProjects();
-        populateUploadRepos();
         document.getElementById('adminHint').textContent = '✅ Вошли как ' + data.login;
       } else {
         document.getElementById('adminHint').textContent = '❌ Неверный токен';
@@ -414,132 +409,3 @@ function renderAdminProjects() {
   `).join('');
 }
 
-// ===== ADMIN: UPLOAD TO GITHUB RELEASE =====
-function populateUploadRepos() {
-  const select = document.getElementById('uploadRepo');
-  select.innerHTML = '';
-
-  // Add GitHub repos
-  GITHUB_REPOS.forEach(repo => {
-    const opt = document.createElement('option');
-    opt.value = repo;
-    opt.textContent = formatRepoName(repo);
-    select.appendChild(opt);
-  });
-
-  // Add custom projects with repos
-  const custom = JSON.parse(localStorage.getItem('hikari_projects') || '[]');
-  custom.forEach(p => {
-    if (p.repo && !GITHUB_REPOS.includes(p.repo)) {
-      const opt = document.createElement('option');
-      opt.value = p.repo;
-      opt.textContent = p.name;
-      select.appendChild(opt);
-    }
-  });
-}
-
-async function uploadToRelease() {
-  const token = githubToken || sessionStorage.getItem('gh_token');
-  if (!token) {
-    alert('⚠️ Сначала войдите через GitHub Token для загрузки файлов!');
-    switchTab('token');
-    document.getElementById('adminContent').style.display = 'none';
-    document.getElementById('adminLogin').style.display = 'block';
-    return;
-  }
-
-  const repo = document.getElementById('uploadRepo').value;
-  const tag = document.getElementById('uploadTag').value.trim();
-  const title = document.getElementById('uploadTitle').value.trim();
-  const body = document.getElementById('uploadBody').value.trim();
-  const fileInput = document.getElementById('uploadFile');
-  const file = fileInput.files[0];
-
-  if (!repo || !tag) return alert('Заполните репозиторий и версию!');
-  if (!file) return alert('Выберите файл для загрузки!');
-
-  const progressDiv = document.getElementById('uploadProgress');
-  const fill = document.getElementById('progressFill');
-  const text = document.getElementById('progressText');
-  progressDiv.style.display = 'block';
-  fill.style.width = '5%';
-  text.textContent = 'Создание релиза...';
-
-  try {
-    // Step 1: Create release
-    fill.style.width = '10%';
-    text.textContent = 'Создание релиза ' + tag + '...';
-
-    const releaseResp = await fetch(`https://api.github.com/repos/${repo}/releases`, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'token ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        tag_name: tag,
-        name: title || tag,
-        body: body || '',
-        draft: false,
-        prerelease: false
-      })
-    });
-
-    if (!releaseResp.ok) {
-      const err = await releaseResp.json();
-      throw new Error('Не удалось создать релиз: ' + (err.message || releaseResp.status));
-    }
-
-    const release = await releaseResp.json();
-    const releaseId = release.id;
-    const uploadUrl = release.upload_url.replace('{?name,label}', '');
-
-    // Step 2: Upload file
-    fill.style.width = '30%';
-    text.textContent = 'Загрузка файла ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(1) + ' MB)...';
-
-    // Use XMLHttpRequest for progress tracking
-    await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', uploadUrl + '?name=' + encodeURIComponent(file.name));
-      xhr.setRequestHeader('Authorization', 'token ' + token);
-      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
-
-      xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) {
-          const pct = 30 + (e.loaded / e.total) * 65;
-          fill.style.width = pct + '%';
-          text.textContent = 'Загрузка... ' + Math.round(e.loaded / e.total * 100) + '% (' + (e.loaded / 1024 / 1024).toFixed(1) + ' / ' + (file.size / 1024 / 1024).toFixed(1) + ' MB)';
-        }
-      };
-
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) resolve();
-        else reject(new Error('Загрузка не удалась: ' + xhr.status));
-      };
-
-      xhr.onerror = () => reject(new Error('Ошибка сети при загрузке'));
-      xhr.send(file);
-    });
-
-    fill.style.width = '100%';
-    text.textContent = '✅ Готово! Релиз ' + tag + ' создан, файл загружен!';
-
-    // Clear form
-    document.getElementById('uploadTag').value = '';
-    document.getElementById('uploadTitle').value = '';
-    document.getElementById('uploadBody').value = '';
-    fileInput.value = '';
-
-    // Reload projects
-    setTimeout(() => {
-      progressDiv.style.display = 'none';
-      loadProjects();
-    }, 3000);
-
-  } catch (err) {
-    text.textContent = '❌ ' + err.message;
-    fill.style.width = '0%';
-  }
-}
