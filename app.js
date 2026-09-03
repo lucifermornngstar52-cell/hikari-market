@@ -319,7 +319,6 @@ function openModal(id) {
     dlBtn = `<button class="btn-primary" disabled>Файл недоступен</button>`;
   }
 
-  const githubBtn = p.repo ? `<a href="https://github.com/${p.repo}" target="_blank" class="btn-secondary">📂 GitHub</a>` : '';
   const isMultiAsset = p.allAssets && p.allAssets.length > 1;
 
   document.getElementById('modalContent').innerHTML = `
@@ -331,7 +330,7 @@ function openModal(id) {
     ${shotsHtml}
     ${isMultiAsset ? `<div class="modal-assets-section"><h4>Файлы для скачивания:</h4>${dlBtn}</div>` : ''}
     <div class="modal-actions">
-      ${isMultiAsset ? githubBtn : dlBtn + githubBtn}
+      ${dlBtn}
     </div>
   `;
 
