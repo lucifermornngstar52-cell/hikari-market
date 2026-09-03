@@ -2,7 +2,8 @@
 const GITHUB_OWNER = 'lucifermornngstar52-cell';
 
 const GITHUB_REPOS = [
-  'lucifermornngstar52-cell/airi-assistant'
+  'lucifermornngstar52-cell/airi-assistant',
+  'lucifermornngstar52-cell/aika-assistant'
 ];
 const ADMIN_PASSWORD = 'hikari2026';
 
@@ -13,9 +14,9 @@ const DEFAULT_PROJECTS = [
     desc: 'AI-ассистент для Android с 3D-аватаром, голосовым управлением, доступом к экрану и автоматизацией задач. Live2D и 3D модели, оверлей поверх других приложений, реакции на приложения, самообучение.',
     category: 'app',
     icon: '🤖',
-    repo: '',
-    version: 'Скоро выйдет',
-    url: '',
+    repo: 'lucifermornngstar52-cell/aika-assistant',
+    version: 'build-1310',
+    url: 'https://github.com/lucifermornngstar52-cell/aika-assistant/releases/download/build-1310/aika-assistant-build1310.apk',
     date: '2026-08-13T00:00:00Z',
     downloads: 0,
     shots: [],
