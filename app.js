@@ -248,10 +248,6 @@ function renderProjects() {
       return icons[pl] || '📦';
     }).join(' ');
 
-    const dlBtn = p.url
-      ? `<button class="card-download" onclick="event.stopPropagation();downloadProject('${p.id}')">⬇ Скачать</button>`
-      : `<button class="card-download" disabled>Скоро</button>`;
-
     return `
       <div class="project-card" onclick="openModal('${p.id}')">
         <div class="card-banner">${iconHtml}
@@ -262,16 +258,10 @@ function renderProjects() {
           <div class="card-desc">${p.desc}</div>
           <div class="card-footer">
             <span class="card-version">${platformIcons} ${p.version || '—'}</span>
-            ${dlBtn}
           </div>
         </div>
       </div>`;
   }).join('');
-}
-
-function downloadProject(id) {
-  const p = projects.find(x => x.id === id);
-  if (p && p.url) window.open(p.url, '_blank');
 }
 
 function updateStats() {
