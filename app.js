@@ -408,3 +408,30 @@ function renderAdminProjects() {
   `).join('');
 }
 
+
+// ===== PAYMENT: COPY CARD =====
+function copyCard(bank) {
+  const num = bank === 'kaspi' ? '4400430062720914' : '4002890050584816';
+  navigator.clipboard.writeText(num).then(() => {
+    toastCardCopied(bank);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = num;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toastCardCopied(bank);
+  });
+}
+function toastCardCopied(bank) {
+  const label = bank === 'kaspi' ? 'Kaspi' : 'Freedom';
+  const old = document.getElementById('copyToast');
+  if (old) old.remove();
+  const t = document.createElement('div');
+  t.id = 'copyToast';
+  t.textContent = '✅ Карта ' + label + ' скопирована';
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--p);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(123,97,255,.4);';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
