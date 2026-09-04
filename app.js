@@ -75,6 +75,8 @@ function adminSection(sec) {
   document.querySelectorAll('.admin-tabs .admin-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
   document.getElementById('secProjects').style.display = sec === 'projects' ? 'block' : 'none';
+  document.getElementById('secKeys').style.display = sec === 'keys' ? 'block' : 'none';
+  if (sec === 'keys') renderKeys();
 }
 
 function toggleAdmin() {
@@ -316,7 +318,7 @@ function openModal(id) {
       }).join('')}</div>`
     : `<a href="${p.url}" download class="btn-primary">⬇ Скачать</a>`;
   window._modalProject = p;
-  const paid = localStorage.getItem('hkm_paid_' + p.id);
+  const paid = localStorage.getItem('hkm_paid');
   const actionsHtml = !hasFiles
     ? `<button class="btn-primary" disabled>Файл недоступен</button>`
     : paid
@@ -427,12 +429,121 @@ function showPaymentStep() {
           <div style="font-size:10px;color:var(--text2,#9a9ab0);margin-top:4px;opacity:.7;">нажми, чтобы скопировать</div>
         </div>
       </div>
-      <button class="btn-primary" style="width:100%;" onclick="confirmPurchase()">✅ Я оплатил — скачать</button>
+      <button class="btn-primary" style="width:100%;" onclick="showCodeEntry()">✅ Я оплатил — ввести код</button>
     </div>`;
 }
-function confirmPurchase() {
-  localStorage.setItem('hkm_paid_' + window._modalProject.id, '1');
-  document.getElementById('modalActions').innerHTML = window._modalDlBtn;
+function showCodeEntry() {
+  document.getElementById('modalActions').innerHTML = `
+    <div style="width:100%;text-align:left;">
+      <p style="color:var(--text2,#9a9ab0);font-size:13px;margin:0 0 10px;">Отправь скриншот оплаты разработчику HikariOS. После проверки оплаты ты получишь <b style="color:var(--p,#7c3aed);">код доступа</b> — введи его здесь:</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input id="accessCodeInput" placeholder="HK-XXXXXX" style="flex:1;min-width:180px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;letter-spacing:1px;" onkeypress="if(event.key==='Enter')activateKey()">
+        <button class="btn-primary" onclick="activateKey()">🔓 Открыть доступ</button>
+      </div>
+      <p id="codeHint" style="color:var(--r,#f44);font-size:12px;margin:8px 0 0;display:none;"></p>
+    </div>`;
+}
+async function activateKey() {
+  const input = document.getElementById('accessCodeInput');
+  const hint = document.getElementById('codeHint');
+  const code = (input.value || '').trim().toUpperCase();
+  if (!code) return;
+  try {
+    const resp = await fetch('keys.json?t=' + Date.now());
+    const data = resp.ok ? await resp.json() : { keys: [] };
+    const keys = (data.keys || []).map(k => String(k).toUpperCase());
+    if (keys.includes(code)) {
+      localStorage.setItem('hkm_paid', '1');
+      document.getElementById('modalActions').innerHTML = window._modalDlBtn;
+    } else {
+      hint.style.display = 'block';
+      hint.textContent = '❌ Неверный код. Дождись подтверждения оплаты.';
+    }
+  } catch (e) {
+    hint.style.display = 'block';
+    hint.textContent = '⚠️ Ошибка соединения, попробуй ещё раз.';
+  }
+}
+
+// ===== ADMIN: ACCESS KEYS =====
+async function fetchKeysFile() {
+  const resp = await fetch('https://api.github.com/repos/lucifermornngstar52-cell/hikari-market/contents/keys.json', {
+    headers: { 'Authorization': 'token ' + githubToken }
+  });
+  if (resp.status === 404) return { sha: null, keys: [] };
+  if (!resp.ok) throw new Error('GitHub: ' + resp.status);
+  const data = await resp.json();
+  const content = data.content ? JSON.parse(atob(data.content.replace(/\n/g, ''))) : { keys: [] };
+  return { sha: data.sha, keys: content.keys || [] };
+}
+async function saveKeysFile(keys, sha) {
+  const content = btoa(JSON.stringify({ keys }, null, 2));
+  const resp = await fetch('https://api.github.com/repos/lucifermornngstar52-cell/hikari-market/contents/keys.json', {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + githubToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: 'update: access keys',
+      content: content,
+      sha: sha || undefined
+    })
+  });
+  if (!resp.ok) throw new Error('GitHub: ' + resp.status);
+}
+function genKey() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let k = '';
+  for (let i = 0; i < 6; i++) k += chars[Math.floor(Math.random() * chars.length)];
+  return 'HK-' + k;
+}
+async function renderKeys() {
+  const list = document.getElementById('adminKeysList');
+  const hint = document.getElementById('keysHint');
+  if (!githubToken) {
+    hint.textContent = '⚠️ Для работы с ключами войди через GitHub Token.';
+    list.innerHTML = '';
+    return;
+  }
+  try {
+    const { keys } = await fetchKeysFile();
+    list.innerHTML = keys.length
+      ? keys.map(k => `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--card,#161626);border:1px solid rgba(123,97,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px;"><code style="color:#fff;font-size:15px;letter-spacing:1px;">${k}</code><button class="btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="deleteKey('${k}')">🗑</button></div>`).join('')
+      : '<p style="color:var(--text2,#9a9ab0);font-size:13px;">Ключей пока нет.</p>';
+    hint.textContent = '';
+  } catch (e) {
+    hint.textContent = '⚠️ Не удалось загрузить ключи: ' + e.message;
+  }
+}
+async function createKey() {
+  const hint = document.getElementById('keysHint');
+  if (!githubToken) {
+    hint.textContent = '⚠️ Войди через GitHub Token, чтобы создавать ключи.';
+    return;
+  }
+  try {
+    hint.textContent = 'Создание ключа...';
+    const { keys, sha } = await fetchKeysFile();
+    const key = genKey();
+    keys.push(key);
+    await saveKeysFile(keys, sha);
+    hint.textContent = '✅ Ключ создан: ' + key + ' — отправь его покупателю.';
+    renderKeys();
+  } catch (e) {
+    hint.textContent = '❌ Ошибка: ' + e.message;
+  }
+}
+async function deleteKey(k) {
+  try {
+    const { keys, sha } = await fetchKeysFile();
+    const idx = keys.indexOf(k);
+    if (idx !== -1) keys.splice(idx, 1);
+    await saveKeysFile(keys, sha);
+    renderKeys();
+  } catch (e) {
+    document.getElementById('keysHint').textContent = '❌ Ошибка: ' + e.message;
+  }
 }
 
 // ===== PAYMENT: COPY CARD =====

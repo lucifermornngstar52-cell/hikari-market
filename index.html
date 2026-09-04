@@ -70,6 +70,7 @@
     <div class="admin-content" id="adminContent" style="display:none;">
       <div class="admin-tabs">
         <button class="admin-tab active" onclick="adminSection('projects')">Проекты</button>
+        <button class="admin-tab" onclick="adminSection('keys')">Ключи доступа</button>
       </div>
 
       <!-- PROJECTS SECTION -->
@@ -115,8 +116,14 @@
         <div id="adminProjectList"></div>
       </div>
 
-      <!-- UPLOAD SECTION -->
-      
+      <!-- KEYS SECTION -->
+      <div id="secKeys" style="display:none;">
+          <h3>Ключи доступа (подтверждение покупок)</h3>
+          <p style="color:var(--text2,#9a9ab0);font-size:13px;">Проверь оплату (скрин перевода от покупателя), затем создай ключ и отправь его покупателю.</p>
+          <button class="btn-primary" style="margin-top:10px;" onclick="createKey()">➕ Создать ключ</button>
+          <p id="keysHint" style="color:var(--text2,#9a9ab0);font-size:12px;margin-top:10px;"></p>
+          <div id="adminKeysList" style="margin-top:14px;"></div>
+        </div>
     </div>
   </div>
 </div>
@@ -154,6 +161,6 @@
   <p>© 2026 HikariOS</p>
 </footer>
 
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
