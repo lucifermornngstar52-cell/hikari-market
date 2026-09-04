@@ -435,7 +435,7 @@ function showPaymentStep() {
 function showCodeEntry() {
   document.getElementById('modalActions').innerHTML = `
     <div style="width:100%;text-align:left;">
-      <p style="color:var(--text2,#9a9ab0);font-size:13px;margin:0 0 10px;">Отправь скриншот оплаты разработчику HikariOS. После проверки оплаты ты получишь <b style="color:var(--p,#7c3aed);">код доступа</b> — введи его здесь:</p>
+      <p style="color:var(--text2,#9a9ab0);font-size:13px;margin:0 0 10px;">Отправь скриншот оплаты разработчику в Telegram: <a href="https://t.me/Unqry" target="_blank" style="color:var(--p,#7c3aed);font-weight:700;">@Unqry</a>. После проверки оплаты ты получишь <b style="color:var(--p,#7c3aed);">код доступа</b> — введи его здесь:</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <input id="accessCodeInput" placeholder="HK-XXXXXX" style="flex:1;min-width:180px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;letter-spacing:1px;" onkeypress="if(event.key==='Enter')activateKey()">
         <button class="btn-primary" onclick="activateKey()">🔓 Открыть доступ</button>
