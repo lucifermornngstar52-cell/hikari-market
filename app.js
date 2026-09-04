@@ -425,7 +425,8 @@ function showPaymentStep() {
 function showCodeEntry() {
   document.getElementById('modalActions').innerHTML = `
     <div style="width:100%;text-align:left;">
-      <p style="color:var(--text2,#9a9ab0);font-size:13px;margin:0 0 10px;">Отправь скриншот оплаты разработчику в Telegram: <a href="https://t.me/Unqry" target="_blank" style="color:var(--p,#7c3aed);font-weight:700;">@Unqry</a>. После проверки оплаты ты получишь <b style="color:var(--p,#7c3aed);">код доступа</b> — введи его здесь:</p>
+      <p style="color:var(--text2,#9a9ab0);font-size:13px;margin:0 0 6px;">1️⃣ Отправь скриншот оплаты разработчику в Telegram: <a href="https://t.me/Unqry" target="_blank" style="color:var(--p,#7c3aed);font-weight:700;">@Unqry</a> → получишь <b style="color:var(--p,#7c3aed);">код доступа</b> для скачивания — введи его здесь:</p>
+      <p style="color:var(--text2,#9a9ab0);font-size:12px;margin:0 0 10px;">2️⃣ Установив приложение, открой его: на экране активации появится ID устройства. Отправь его в @Unqry → получишь код активации приложения (привязан к твоему телефону).</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <input id="accessCodeInput" placeholder="HK-XXXXXX" style="flex:1;min-width:180px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;letter-spacing:1px;" onkeypress="if(event.key==='Enter')activateKey()">
         <button class="btn-primary" onclick="activateKey()">🔓 Открыть доступ</button>
@@ -572,4 +573,38 @@ function notifyKeyActivation(code) {
       body: '🔑 Ключ ' + code + ' активирован — удали его в админке, чтобы не слили'
     }).catch(() => {});
   } catch (e) {}
+}
+
+
+// ===== ADMIN: ACTIVATION CODE GENERATOR (app license, device-bound) =====
+async function generateActivationCode() {
+  const input = document.getElementById('devIdInput');
+  const out = document.getElementById('activationCodeOut');
+  const devId = (input.value || '').trim().toUpperCase().replace(/[^A-F0-9]/g, '');
+  if (!devId || devId.length < 8) {
+    out.textContent = 'Вставь ID устройства с экрана активации';
+    out.style.color = '#f87171';
+    return;
+  }
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode('185f4581ecc7a95d842b149299b26cb00f145cdeb74fa652'),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(devId));
+  const hex = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const code = 'AK-' + hex.substring(0, 6).toUpperCase();
+  out.textContent = code;
+  out.style.color = '#fff';
+  try { navigator.clipboard.writeText(code); } catch (e) {}
+  const hist = JSON.parse(localStorage.getItem('hkm_ak_codes') || '[]');
+  hist.unshift({ code, devId, date: new Date().toLocaleString('ru') });
+  localStorage.setItem('hkm_ak_codes', JSON.stringify(hist.slice(0, 30)));
+  renderAkHistory();
+}
+function renderAkHistory() {
+  const hist = JSON.parse(localStorage.getItem('hkm_ak_codes') || '[]');
+  document.getElementById('akHistory').innerHTML = hist.length
+    ? hist.map(h => `<div style="display:flex;justify-content:space-between;background:var(--card,#161626);border:1px solid rgba(123,97,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:13px;"><code style="color:#fff;">${h.code}</code><span style="color:var(--text2,#9a9ab0);">ID ${h.devId.slice(0,8)}… · ${h.date}</span></div>`).join('')
+    : '';
 }
