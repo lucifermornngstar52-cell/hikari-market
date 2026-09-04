@@ -445,6 +445,7 @@ async function activateKey() {
     if (keys.includes(code)) {
       localStorage.setItem('hkm_paid', '1');
       document.getElementById('modalActions').innerHTML = window._modalDlBtn;
+      notifyKeyActivation(code);
     } else {
       hint.style.display = 'block';
       hint.textContent = '❌ Неверный код. Дождись подтверждения оплаты.';
@@ -561,4 +562,14 @@ function toastCardCopied(bank) {
   t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--p);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(123,97,255,.4);';
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2500);
+}
+
+// ===== NOTIFY OWNER: key activated (ntfy push) =====
+function notifyKeyActivation(code) {
+  try {
+    fetch('https://ntfy.sh/hikari-keys-x7k2m9v4q8', {
+      method: 'POST',
+      body: '🔑 Ключ ' + code + ' активирован — удали его в админке, чтобы не слили'
+    }).catch(() => {});
+  } catch (e) {}
 }
