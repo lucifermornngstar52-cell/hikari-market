@@ -306,20 +306,22 @@ function openModal(id) {
       ${platformIcons}
     </div>`;
 
-  let dlBtn;
-  if (p.allAssets && p.allAssets.length > 1) {
-    dlBtn = `<div class="modal-assets">${p.allAssets.map(a => {
-      const icon = a.name.endsWith('.apk') ? '🤖' : a.name.endsWith('.exe') ? '🪟' : a.name.endsWith('.zip') ? '📦' : '📄';
-      const sizeMb = a.size ? (a.size / 1024 / 1024).toFixed(1) : '?';
-      return `<a href="${a.url}" download class="btn-asset"><span>${icon} ${a.name}</span><small>${sizeMb} MB · ⬇ ${a.downloads}</small></a>`;
-    }).join('')}</div>`;
-  } else if (p.url) {
-    dlBtn = `<a href="${p.url}" download class="btn-primary">⬇ Скачать</a>`;
-  } else {
-    dlBtn = `<button class="btn-primary" disabled>Файл недоступен</button>`;
-  }
-
   const isMultiAsset = p.allAssets && p.allAssets.length > 1;
+  const hasFiles = isMultiAsset || !!p.url;
+  window._modalDlBtn = isMultiAsset
+    ? `<div class="modal-assets">${p.allAssets.map(a => {
+        const icon = a.name.endsWith('.apk') ? '🤖' : a.name.endsWith('.exe') ? '🪟' : a.name.endsWith('.zip') ? '📦' : '📄';
+        const sizeMb = a.size ? (a.size / 1024 / 1024).toFixed(1) : '?';
+        return `<a href="${a.url}" download class="btn-asset"><span>${icon} ${a.name}</span><small>${sizeMb} MB · ⬇ ${a.downloads}</small></a>`;
+      }).join('')}</div>`
+    : `<a href="${p.url}" download class="btn-primary">⬇ Скачать</a>`;
+  window._modalProject = p;
+  const paid = localStorage.getItem('hkm_paid_' + p.id);
+  const actionsHtml = !hasFiles
+    ? `<button class="btn-primary" disabled>Файл недоступен</button>`
+    : paid
+      ? window._modalDlBtn
+      : `<button class="btn-primary" onclick="showPaymentStep()">💳 Купить за 1 000 ₸</button>`;
 
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-icon">${iconHtml}</div>
@@ -328,9 +330,8 @@ function openModal(id) {
     ${metaHtml}
     <p class="modal-desc">${p.desc}</p>
     ${shotsHtml}
-    ${isMultiAsset ? `<div class="modal-assets-section"><h4>Файлы для скачивания:</h4>${dlBtn}</div>` : ''}
-    <div class="modal-actions">
-      ${dlBtn}
+    <div class="modal-actions" id="modalActions">
+      ${actionsHtml}
     </div>
   `;
 
@@ -408,6 +409,31 @@ function renderAdminProjects() {
   `).join('');
 }
 
+
+// ===== PURCHASE: PAYMENT STEP =====
+function showPaymentStep() {
+  document.getElementById('modalActions').innerHTML = `
+    <div style="width:100%;text-align:left;">
+      <p style="color:var(--text2);font-size:13px;margin:0 0 12px;">Переведи <b style="color:var(--p);">1 000 ₸</b> на карту любым банком и нажми кнопку ниже:</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div onclick="copyCard('kaspi')" style="flex:1;min-width:200px;cursor:pointer;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;">
+          <div style="font-weight:700;color:#fff;font-size:13px;">🟡 Kaspi Gold</div>
+          <div style="color:var(--text2,#9a9ab0);font-size:14px;letter-spacing:1px;margin-top:4px;">4400 4300 6272 0914</div>
+          <div style="font-size:10px;color:var(--text2,#9a9ab0);margin-top:4px;opacity:.7;">нажми, чтобы скопировать</div>
+        </div>
+        <div onclick="copyCard('freedom')" style="flex:1;min-width:200px;cursor:pointer;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;">
+          <div style="font-weight:700;color:#fff;font-size:13px;">🟢 Freedom Bank</div>
+          <div style="color:var(--text2,#9a9ab0);font-size:14px;letter-spacing:1px;margin-top:4px;">4002 8900 5058 4816</div>
+          <div style="font-size:10px;color:var(--text2,#9a9ab0);margin-top:4px;opacity:.7;">нажми, чтобы скопировать</div>
+        </div>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="confirmPurchase()">✅ Я оплатил — скачать</button>
+    </div>`;
+}
+function confirmPurchase() {
+  localStorage.setItem('hkm_paid_' + window._modalProject.id, '1');
+  document.getElementById('modalActions').innerHTML = window._modalDlBtn;
+}
 
 // ===== PAYMENT: COPY CARD =====
 function copyCard(bank) {
