@@ -143,25 +143,27 @@ async function loadProjects() {
         const existing = projects.find(p => p.repo === repo && !p.auto);
 
         if (existing) {
-          if (primaryAsset && !existing.url) existing.url = primaryAsset.browser_download_url;
-          if (rel.tag_name) existing.version = rel.tag_name;
-          existing.downloads = (existing.downloads || 0) + assets.reduce((s, a) => s + a.download_count, 0);
-          if (rel.published_at && (!existing.date || new Date(rel.published_at) > new Date(existing.date))) {
+          // Только САМЫЙ ПОСЛЕДНИЙ релиз считается актуальным. Старые релизы
+          // (без лицензии) никогда не подмешиваются в список файлов — иначе
+          // покупатель может скачать незащищённую старую версию бесплатно.
+          const relDate = new Date(rel.published_at || 0);
+          const curDate = existing._latestReleaseDate ? new Date(existing._latestReleaseDate) : null;
+          if (!curDate || relDate > curDate) {
+            existing._latestReleaseDate = rel.published_at;
+            if (primaryAsset) existing.url = primaryAsset.browser_download_url;
+            if (rel.tag_name) existing.version = rel.tag_name;
             existing.date = rel.published_at;
+            existing.allAssets = assets.map(a => ({
+              name: a.name,
+              url: a.browser_download_url,
+              size: a.size,
+              downloads: a.download_count
+            }));
+            if (!existing.platforms || existing.platforms.length === 0) {
+              existing.platforms = detectPlatforms(assets);
+            }
           }
-          if (!existing.allAssets) existing.allAssets = [];
-          const newAssets = assets.map(a => ({
-            name: a.name,
-            url: a.browser_download_url,
-            size: a.size,
-            downloads: a.download_count
-          }));
-          for (const na of newAssets) {
-            if (!existing.allAssets.find(a => a.name === na.name)) existing.allAssets.push(na);
-          }
-          if (!existing.platforms || existing.platforms.length === 0) {
-            existing.platforms = detectPlatforms(assets);
-          }
+          existing.downloads = (existing.downloads || 0) + assets.reduce((s, a) => s + a.download_count, 0);
         } else {
           // Create new project from release
           const isGame = repo.includes('clock') || repo.includes('game');
@@ -308,7 +310,7 @@ function openModal(id) {
       }).join('')}</div>`
     : `<a href="${p.url}" download class="btn-primary">⬇ Скачать</a>`;
   window._modalProject = p;
-  const paid = localStorage.getItem('hkm_paid');
+  const paid = localStorage.getItem('hkm_paid_' + p.id);
   const actionsHtml = !hasFiles
     ? `<button class="btn-primary" disabled>Файл недоступен</button>`
     : paid
@@ -444,7 +446,7 @@ async function activateKey() {
     const data = resp.ok ? await resp.json() : { keys: [] };
     const keys = (data.keys || []).map(k => String(k).toUpperCase());
     if (keys.includes(code)) {
-      localStorage.setItem('hkm_paid', '1');
+      localStorage.setItem('hkm_paid_' + window._modalProject.id, '1');
       document.getElementById('modalActions').innerHTML = window._modalDlBtn;
       notifyKeyActivation(code);
     } else {
