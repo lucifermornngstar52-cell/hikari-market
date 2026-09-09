@@ -23,6 +23,7 @@
       <a href="#" class="nav-link" data-filter="app">Приложения</a>
       <a href="#" class="nav-link" data-filter="game">Игры</a>
       <a href="#" class="nav-link" data-filter="tool">Инструменты</a>
+      <a href="#exchange" class="nav-x" style="color:#34d399;font-size:13px;padding:6px 12px;border-radius:10px;background:rgba(52,211,153,.08);margin-left:8px">📈 Биржа</a>
     </nav>
     <button class="admin-btn" onclick="toggleAdmin()" title="Управление">⚙️</button>
   </div>
@@ -37,6 +38,23 @@
     <div class="stat"><span class="stat-num" id="statDownloads">—</span><span class="stat-label">загрузок</span></div>
     <div class="stat"><span class="stat-num" id="statLatest">—</span><span class="stat-label">последний релиз</span></div>
   </div>
+</section>
+
+<!-- STOCK EXCHANGE -->
+<section class="exchange" id="exchange">
+  <div class="section-title">
+    <h2>📈 HikariStock — биржа</h2>
+    <p>Акции HikariOS, PenkovBank и крупнейших компаний Казахстана. Торговля на демо-тенге со счёта PenkovBank.</p>
+  </div>
+  <div class="ex-balance" id="exBalance" style="display:none">
+    <span>🏦 Счёт: <b id="exBalVal">0 ₸</b></span>
+    <span>💼 Портфель: <b id="exPortVal">0 ₸</b></span>
+    <span>📊 P/L: <b id="exPLVal">0 ₸</b></span>
+  </div>
+  <div class="ex-noacct" id="exNoAcct" style="display:none">
+    ⚠️ Для торговли нужен демо-счёт PenkovBank — <a href="https://lucifermornngstar52-cell.github.io/penkov-bank/" target="_blank">открыть за 5 секунд</a> и вернуться сюда
+  </div>
+  <div class="stocks-grid" id="stocksGrid"></div>
 </section>
 
 <!-- ADMIN PANEL -->
@@ -173,5 +191,6 @@
 </footer>
 
 <script src="app.js?v=13"></script>
+<script src="exchange.js?v=1"></script>
 </body>
 </html>
