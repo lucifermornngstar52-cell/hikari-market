@@ -207,12 +207,14 @@ body::after {
   background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--text-mid);
-  width: 36px;
   height: 36px;
+  padding: 0 14px;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 13px;
+  font-weight: 500;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .admin-btn:hover { border-color: var(--accent); color: var(--accent); }

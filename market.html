@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HikariOS — Marketplace</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -35,14 +35,14 @@
       <a href="/" class="nav-link">Возможности</a>
       <a href="install.html" class="nav-link">Инструкция</a>
     </nav>
-    <button class="admin-btn" onclick="toggleAdmin()" title="Управление">⚙️</button>
+    <button class="admin-btn" onclick="toggleAdmin()" title="Панель управления">Управление</button>
   </div>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <h1>Hikari<span class="accent">OS</span> Marketplace</h1>
-  <p>Эксклюзивные приложения и игры от разработчика HikariOS. Скачивай, устанавливай, тестируй.</p>
+  <h1>Маркет <span class="accent">HikariOS</span></h1>
+  <p>Приложения и игры от HikariOS. Оплата один раз, доступ навсегда.</p>
   <div class="hero-stats" id="heroStats">
     <div class="stat"><span class="stat-num" id="statApps">—</span><span class="stat-label">проектов</span></div>
     <div class="stat"><span class="stat-num" id="statDownloads">—</span><span class="stat-label">загрузок</span></div>
@@ -54,7 +54,7 @@
 <div class="admin-panel" id="adminPanel" style="display:none;">
   <div class="admin-inner">
     <div class="admin-header">
-      <h2>⚙️ Панель управления</h2>
+      <h2>Панель управления</h2>
       <button class="close-btn" onclick="toggleAdmin()">✕</button>
     </div>
     
@@ -100,7 +100,7 @@
           </div>
           <div class="form-row">
             <label>Иконка (emoji или URL)</label>
-            <input type="text" id="projIcon" placeholder="🤖 или https://...">
+            <input type="text" id="projIcon" placeholder="символ или ссылка на картинку">
           </div>
           <div class="form-row">
             <label>GitHub репозиторий (user/repo)</label>
@@ -125,11 +125,11 @@
       <div id="secKeys" style="display:none;">
           <h3>Ключи доступа (подтверждение покупок)</h3>
           <p style="color:var(--text2,#9a9ab0);font-size:13px;">Проверь оплату (скрин перевода от покупателя), затем создай ключ и отправь его покупателю.</p>
-          <p style="color:var(--text2,#9a9ab0);font-size:12px;">🔔 Установи приложение <a href="https://ntfy.sh" target="_blank" style="color:var(--p,#7c3aed);">ntfy</a> и подпишись на топик <code>hikari-keys-x7k2m9v4q8</code> — придёт пуш при каждой активации ключа. После активации удали ключ кнопкой 🗑, тогда утечка ключа в сеть будет не страшна.</p>
-          <button class="btn-primary" style="margin-top:10px;" onclick="createKey()">➕ Создать ключ</button>
+          <p style="color:var(--text2,#9a9ab0);font-size:12px;">Установите приложение <a href="https://ntfy.sh" target="_blank" style="color:var(--p,#7c3aed);">ntfy</a> и подпишись на топик <code>hikari-keys-x7k2m9v4q8</code> — придёт пуш при каждой активации ключа. После активации удалите ключ по коду — тогда утечка ключа будет не страшна.</p>
+          <button class="btn-primary" style="margin-top:10px;" onclick="createKey()">Создать ключ</button>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
             <input id="delKeyCodeInput" placeholder="Удалить ключ по коду (HK-XXXXXX)" style="flex:1;min-width:200px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:10px 14px;color:#fff;font-size:13px;">
-            <button class="btn-secondary" onclick="deleteKeyByCode()">🗑 Удалить по коду</button>
+            <button class="btn-secondary" onclick="deleteKeyByCode()">Удалить по коду</button>
           </div>
 
           <hr class="admin-divider" style="margin-top:20px;">
@@ -137,7 +137,7 @@
           <p style="color:var(--text2,#9a9ab0);font-size:13px;">Для активации Aika на телефоне покупателя: покупатель присылает ID устройства (с экрана активации в приложении), ты вставляешь его сюда и отправляешь покупателю полученный код. Работает без GitHub Token.</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
             <input id="devIdInput" placeholder="ID устройства (12 символов)" style="flex:1;min-width:200px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;letter-spacing:1px;">
-            <button class="btn-primary" onclick="generateActivationCode()">⚡ Сгенерировать</button>
+            <button class="btn-primary" onclick="generateActivationCode()">Сгенерировать</button>
           </div>
           <p id="activationCodeOut" style="font-size:20px;font-weight:700;letter-spacing:2px;margin-top:12px;color:#fff;"></p>
           <div id="akHistory" style="margin-top:10px;"></div>
@@ -151,7 +151,7 @@
 <!-- PROJECTS -->
 <div class="section-title">
   <h2>Все проекты</h2>
-  <p>Нажми на карточку для подробностей и скачивания</p>
+  <p>Нажмите на карточку, чтобы открыть подробности и скачать</p>
 </div>
 
 <main class="main">
@@ -181,6 +181,6 @@
   <p>© 2026 HikariOS · <a href="install.html" style="color:var(--text-mid);text-decoration:none;">Инструкция по установке</a></p>
 </footer>
 
-<script src="app.js?v=13"></script>
+<script src="app.js?v=14"></script>
 </body>
 </html>

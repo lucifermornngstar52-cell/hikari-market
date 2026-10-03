@@ -92,7 +92,7 @@ function loginWithToken() {
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminContent').style.display = 'block';
         renderAdminProjects();
-        document.getElementById('adminHint').textContent = '✅ Вошли как ' + data.login;
+        document.getElementById('adminHint').textContent = 'Вошли как ' + data.login;
       } else if (data.login) {
         // чужой токен: админку открывает только владелец репозитория
         document.getElementById('adminHint').textContent = '❌ Токен не владельца: ' + data.login;
@@ -155,7 +155,7 @@ async function loadProjects() {
               name: formatRepoName(repo),
               desc: rel.body ? rel.body.substring(0, 200) : 'Релиз ' + rel.tag_name,
               category: isGame ? 'game' : 'app',
-              icon: '📦',
+              icon: '◇',
               repo: repo,
               version: rel.tag_name || '—',
               url: primaryAsset ? primaryAsset.browser_download_url : rel.html_url,
@@ -210,31 +210,31 @@ function formatRepoName(repo) {
 function renderProjects() {
   const grid = document.getElementById('projectsGrid');
   if (projects.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="emoji">📂</div><p>Пока нет проектов</p></div>`;
+    grid.innerHTML = `<div class="empty-state"><p>Пока нет проектов</p></div>`;
     return;
   }
 
   const filtered = currentFilter === 'all' ? projects : projects.filter(p => p.category === currentFilter);
 
   if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="emoji">🔍</div><p>Нет проектов в этой категории</p></div>`;
+    grid.innerHTML = `<div class="empty-state"><p>Нет проектов в этой категории</p></div>`;
     return;
   }
 
   grid.innerHTML = filtered.map(p => {
     const iconHtml = p.icon && (p.icon.startsWith('http') || p.icon.match(/\.(png|jpg|jpeg|webp|gif|svg)/i))
       ? `<img src="${p.icon}" alt="${p.name}">`
-      : p.icon || '📦';
+      : p.icon || '◇';
 
     const platformIcons = (p.platforms || []).map(pl => {
-      const icons = { android: '🤖', windows: '🪟', web: '🌐', pwa: '📱', ios: '🍎', macos: '💻', other: '📦' };
-      return icons[pl] || '📦';
-    }).join(' ');
+      const icons = { android: 'Android', windows: 'Windows', web: 'Web', pwa: 'PWA', ios: 'iOS', macos: 'macOS', other: 'Прочее' };
+      return icons[pl] || '';
+    }).join(' · ');
 
     return `
       <div class="project-card" onclick="openModal('${p.id}')">
         <div class="card-banner">${iconHtml}
-          ${p.downloads ? `<span class="card-badge">⬇ ${p.downloads}</span>` : ''}
+          ${p.downloads ? `<span class="card-badge">↓ ${p.downloads}</span>` : ''}
         </div>
         <div class="card-body">
           <div class="card-title">${p.name}</div>
@@ -263,21 +263,21 @@ function openModal(id) {
 
   const iconHtml = p.icon && (p.icon.startsWith('http') || p.icon.match(/\.(png|jpg|jpeg|webp|gif|svg)/i))
     ? `<img src="${p.icon}" alt="${p.name}">`
-    : p.icon || '📦';
+    : p.icon || '◇';
 
   const shotsHtml = p.shots && p.shots.length
     ? `<div class="modal-shots">${p.shots.map(s => `<img src="${s}" alt="screenshot">`).join('')}</div>`
     : '';
 
   const platformIcons = (p.platforms || []).map(pl => {
-    const icons = { android: '🤖 Android', windows: '🪟 Windows', web: '🌐 Web', pwa: '📱 PWA', ios: '🍎 iOS', macos: '💻 macOS', other: '📦' };
-    return `<span class="meta-item">${icons[pl] || '📦'}</span>`;
+    const icons = { android: 'Android', windows: 'Windows', web: 'Web', pwa: 'PWA', ios: 'iOS', macos: 'macOS', other: 'Прочее' };
+    return `<span class="meta-item">${icons[pl] || ''}</span>`;
   }).join('');
 
   const metaHtml = `
     <div class="modal-meta">
-      <span class="meta-item">📅 ${p.date ? new Date(p.date).toLocaleDateString('ru') : '—'}</span>
-      <span class="meta-item">⬇ ${p.downloads || 0} загрузок</span>
+      <span class="meta-item">${p.date ? new Date(p.date).toLocaleDateString('ru') : '—'}</span>
+      <span class="meta-item">↓ ${p.downloads || 0} загрузок</span>
       ${platformIcons}
     </div>`;
 
@@ -285,18 +285,18 @@ function openModal(id) {
   const hasFiles = isMultiAsset || !!p.url;
   window._modalDlBtn = isMultiAsset
     ? `<div class="modal-assets">${p.allAssets.map(a => {
-        const icon = a.name.endsWith('.apk') ? '🤖' : a.name.endsWith('.exe') ? '🪟' : a.name.endsWith('.zip') ? '📦' : '📄';
+        const icon = '';
         const sizeMb = a.size ? (a.size / 1024 / 1024).toFixed(1) : '?';
-        return `<a href="${a.url}" download class="btn-asset"><span>${icon} ${a.name}</span><small>${sizeMb} MB · ⬇ ${a.downloads}</small></a>`;
+        return `<a href="${a.url}" download class="btn-asset"><span>${a.name}</span><small>${sizeMb} MB · ↓ ${a.downloads}</small></a>`;
       }).join('')}</div>`
-    : `<a href="${p.url}" download class="btn-primary">⬇ Скачать</a>`;
+    : `<a href="${p.url}" download class="btn-primary">Скачать</a>`;
   window._modalProject = p;
   const paid = localStorage.getItem('hkm_paid_' + p.id);
   const actionsHtml = !hasFiles
     ? `<button class="btn-primary" disabled>Файл недоступен</button>`
     : paid
       ? window._modalDlBtn
-      : `<button class="btn-primary" onclick="showPaymentStep()">💳 Купить за 1 000 ₸</button>`;
+      : `<button class="btn-primary" onclick="showPaymentStep()">Купить за 1 000 ₸</button>`;
 
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-icon">${iconHtml}</div>
@@ -328,7 +328,7 @@ function addProject() {
     name: name,
     desc: document.getElementById('projDesc').value.trim() || 'Без описания',
     category: document.getElementById('projCategory').value,
-    icon: document.getElementById('projIcon').value.trim() || '📦',
+    icon: document.getElementById('projIcon').value.trim() || '',
     repo: document.getElementById('projRepo').value.trim(),
     version: '—',
     url: '',
@@ -389,30 +389,30 @@ function renderAdminProjects() {
 function showPaymentStep() {
   document.getElementById('modalActions').innerHTML = `
     <div style="width:100%;text-align:left;">
-      <p style="color:var(--text2);font-size:13px;margin:0 0 12px;">Переведи <b style="color:var(--p);">1 000 ₸</b> на карту любым банком и нажми кнопку ниже:</p>
+      <p style="color:var(--text2);font-size:13px;margin:0 0 12px;">Переведите <b style="color:var(--p);">1 000 ₸</b> на карту любым банком и нажмите кнопку ниже:</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
         <div onclick="copyCard('kaspi')" style="flex:1;min-width:200px;cursor:pointer;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;">
-          <div style="font-weight:700;color:#fff;font-size:13px;">🟡 Kaspi Gold</div>
+          <div style="font-weight:700;color:#fff;font-size:13px;">Kaspi Gold</div>
           <div style="color:var(--text2,#9a9ab0);font-size:14px;letter-spacing:1px;margin-top:4px;">4400 4300 6272 0914</div>
-          <div style="font-size:10px;color:var(--text2,#9a9ab0);margin-top:4px;opacity:.7;">нажми, чтобы скопировать</div>
+          <div style="font-size:10px;color:var(--text2,#9a9ab0);margin-top:4px;opacity:.7;">нажмите, чтобы скопировать</div>
         </div>
         <div onclick="copyCard('freedom')" style="flex:1;min-width:200px;cursor:pointer;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;">
-          <div style="font-weight:700;color:#fff;font-size:13px;">🟢 Freedom Bank</div>
+          <div style="font-weight:700;color:#fff;font-size:13px;">Freedom Bank</div>
           <div style="color:var(--text2,#9a9ab0);font-size:14px;letter-spacing:1px;margin-top:4px;">4002 8900 5058 4816</div>
-          <div style="font-size:10px;color:var(--text2,#9a9ab0);margin-top:4px;opacity:.7;">нажми, чтобы скопировать</div>
+          <div style="font-size:10px;color:var(--text2,#9a9ab0);margin-top:4px;opacity:.7;">нажмите, чтобы скопировать</div>
         </div>
       </div>
-      <button class="btn-primary" style="width:100%;" onclick="showCodeEntry()">✅ Я оплатил — ввести код</button>
+      <button class="btn-primary" style="width:100%;" onclick="showCodeEntry()">Я оплатил — ввести код</button>
     </div>`;
 }
 function showCodeEntry() {
   document.getElementById('modalActions').innerHTML = `
     <div style="width:100%;text-align:left;">
-      <p style="color:var(--text2,#9a9ab0);font-size:13px;margin:0 0 6px;">1️⃣ Отправь скриншот оплаты разработчику в Telegram: <a href="https://t.me/Unqry" target="_blank" style="color:var(--p,#7c3aed);font-weight:700;">@Unqry</a> → получишь <b style="color:var(--p,#7c3aed);">код доступа</b> для скачивания — введи его здесь:</p>
-      <p style="color:var(--text2,#9a9ab0);font-size:12px;margin:0 0 10px;">2️⃣ Установив приложение, открой его: на экране активации появится ID устройства. Отправь его в @Unqry → получишь код активации приложения (привязан к твоему телефону).</p>
+      <p style="color:var(--text2,#9a9ab0);font-size:13px;margin:0 0 6px;">1. Отправьте скриншот оплаты разработчику в Telegram: <a href="https://t.me/Unqry" target="_blank" style="color:var(--p,#7c3aed);font-weight:700;">@Unqry</a> → получите <b style="color:var(--p,#7c3aed);">код доступа</b> для скачивания — введите его здесь:</p>
+      <p style="color:var(--text2,#9a9ab0);font-size:12px;margin:0 0 10px;">2. Установив приложение, откройте его: на экране активации появится ID устройства. Отправьте его в @Unqry — получите код активации приложения (привязан к вашему телефону).</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <input id="accessCodeInput" placeholder="HK-XXXXXX" style="flex:1;min-width:180px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;letter-spacing:1px;" onkeypress="if(event.key==='Enter')activateKey()">
-        <button class="btn-primary" onclick="activateKey()">🔓 Открыть доступ</button>
+        <button class="btn-primary" onclick="activateKey()">Открыть доступ</button>
       </div>
       <p id="codeHint" style="color:var(--r,#f44);font-size:12px;margin:8px 0 0;display:none;"></p>
     </div>`;
@@ -495,7 +495,7 @@ async function renderKeys() {
     list.innerHTML = keys.length
       ? keys.map(k => {
           const shown = isHashedKey(k) ? '🔒 ' + k.slice(0, 10) + '…' : k;
-          return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--card,#161626);border:1px solid rgba(123,97,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px;"><code style="color:#fff;font-size:15px;letter-spacing:1px;">${shown}</code><button class="btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="deleteKey('${k}')">🗑</button></div>`;
+          return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--card,#161626);border:1px solid rgba(123,97,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px;"><code style="color:#fff;font-size:15px;letter-spacing:1px;">${shown}</code><button class="btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="deleteKey('${k}')">Удалить</button></div>`;
         }).join('')
       : '<p style="color:var(--text2,#9a9ab0);font-size:13px;">Ключей пока нет.</p>';
     hint.textContent = '';
@@ -515,7 +515,7 @@ async function createKey() {
     const key = genKey();
     keys.push(await hashKey(key));
     await saveKeysFile(keys, sha);
-    hint.textContent = '✅ Ключ создан: ' + key + ' — отправь его покупателю (код показывается один раз, в файле хранится только хэш).';
+    hint.textContent = 'Ключ создан: ' + key + ' — отправь его покупателю (код показывается один раз, в файле хранится только хэш).';
     renderKeys();
   } catch (e) {
     hint.textContent = '❌ Ошибка: ' + e.message;
@@ -544,7 +544,7 @@ async function deleteKeyByCode() {
     if (idx !== -1) {
       keys.splice(idx, 1);
       await saveKeysFile(keys, sha);
-      hint.textContent = '✅ Ключ удалён.';
+      hint.textContent = 'Ключ удалён.';
     } else {
       hint.textContent = '❌ Такой ключ не найден.';
     }
@@ -575,7 +575,7 @@ function toastCardCopied(bank) {
   if (old) old.remove();
   const t = document.createElement('div');
   t.id = 'copyToast';
-  t.textContent = '✅ Карта ' + label + ' скопирована';
+  t.textContent = 'Карта ' + label + ' скопирована';
   t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--p);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(123,97,255,.4);';
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2500);
