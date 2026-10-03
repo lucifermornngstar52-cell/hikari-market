@@ -14,9 +14,9 @@ const DEFAULT_PROJECTS = [
     category: 'app',
     icon: 'img/aika_icon.png',
     repo: 'lucifermornngstar52-cell/aika-assistant',
-    version: 'build-1311',
-    url: 'https://github.com/lucifermornngstar52-cell/aika-assistant/releases/download/build-1311/aika-assistant-build-1311.apk',
-    date: '2026-08-13T00:00:00Z',
+    version: 'build-1387',
+    url: 'https://github.com/lucifermornngstar52-cell/aika-assistant/releases/download/build-1387/aika-assistant-build-1387.apk',
+    date: '2026-10-03T00:00:00Z',
     downloads: 0,
     shots: [],
     auto: false,
@@ -107,7 +107,7 @@ function loginWithToken() {
   })
     .then(r => r.json())
     .then(data => {
-      if (data.login) {
+      if (data.login === GITHUB_OWNER) {
         githubToken = token;
         sessionStorage.setItem('gh_token', token);
         isAdmin = true;
@@ -115,6 +115,9 @@ function loginWithToken() {
         document.getElementById('adminContent').style.display = 'block';
         renderAdminProjects();
         document.getElementById('adminHint').textContent = '✅ Вошли как ' + data.login;
+      } else if (data.login) {
+        // чужой токен: админку открывает только владелец репозитория
+        document.getElementById('adminHint').textContent = '❌ Токен не владельца: ' + data.login;
       } else {
         document.getElementById('adminHint').textContent = '❌ Неверный токен';
       }
