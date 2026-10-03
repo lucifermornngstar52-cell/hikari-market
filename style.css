@@ -952,3 +952,70 @@ body::after {
   .inst-card { padding: 18px 16px; }
   .inst-card:hover { transform: none; }
 }
+
+/* ===== СТРАНИЦА ВОЗМОЖНОСТЕЙ ===== */
+.feat-main {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 10px 20px 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.feat-row {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.feat-row.feat-rev { flex-direction: row-reverse; }
+
+.feat-shot {
+  flex: 0 0 300px;
+  border-radius: 18px;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  padding: 8px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45), 0 0 40px rgba(139, 92, 246, 0.08);
+  transition: transform .3s, box-shadow .3s;
+}
+
+.feat-shot:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.5), 0 0 60px rgba(139, 92, 246, 0.14);
+}
+
+.feat-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.feat-text { flex: 1; }
+
+.feat-text h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.feat-text p {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text-mid);
+  margin-bottom: 8px;
+}
+
+@media (max-width: 760px) {
+  .feat-main { gap: 34px; }
+  .feat-row, .feat-row.feat-rev { flex-direction: column; gap: 16px; }
+  .feat-shot { flex: none; width: min(280px, 80%); }
+  .feat-text { text-align: left; }
+}
