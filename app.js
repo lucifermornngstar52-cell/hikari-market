@@ -4,7 +4,6 @@ const GITHUB_OWNER = 'lucifermornngstar52-cell';
 const GITHUB_REPOS = [
   'lucifermornngstar52-cell/aika-assistant'
 ];
-const ADMIN_PASSWORD = 'hikari2026';
 
 const DEFAULT_PROJECTS = [
   {
@@ -63,14 +62,6 @@ function setupNavFilters() {
   });
 }
 
-// ===== ADMIN TABS =====
-function switchTab(tab) {
-  document.querySelectorAll('.admin-tab-row .admin-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('tabPass').style.display = tab === 'pass' ? 'block' : 'none';
-  document.getElementById('tabToken').style.display = tab === 'token' ? 'block' : 'none';
-}
-
 function adminSection(sec) {
   document.querySelectorAll('.admin-tabs .admin-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
@@ -82,19 +73,6 @@ function adminSection(sec) {
 function toggleAdmin() {
   const panel = document.getElementById('adminPanel');
   panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
-}
-
-// ===== ADMIN LOGIN =====
-function adminLogin() {
-  const pass = document.getElementById('adminPass').value;
-  if (pass === ADMIN_PASSWORD) {
-    isAdmin = true;
-    document.getElementById('adminLogin').style.display = 'none';
-    document.getElementById('adminContent').style.display = 'block';
-    renderAdminProjects();
-  } else {
-    document.getElementById('adminHint').textContent = '❌ Неверный пароль';
-  }
 }
 
 function loginWithToken() {

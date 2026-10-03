@@ -56,21 +56,15 @@
       <button class="close-btn" onclick="toggleAdmin()">✕</button>
     </div>
     
-    <!-- LOGIN -->
+    <!-- LOGIN (только токен владельца) -->
     <div class="admin-login" id="adminLogin">
       <div class="admin-tab-row">
-        <button class="admin-tab active" onclick="switchTab('pass')">По паролю</button>
-        <button class="admin-tab" onclick="switchTab('token')">GitHub Token</button>
+        <button class="admin-tab active">Вход по GitHub Token</button>
       </div>
-      <div id="tabPass">
-        <p>Введите пароль администратора:</p>
-        <input type="password" id="adminPass" placeholder="Пароль" onkeypress="if(event.key==='Enter')adminLogin()">
-        <button class="btn-primary" onclick="adminLogin()">Войти</button>
-      </div>
-      <div id="tabToken" style="display:none;">
-        <p>Введите GitHub Personal Access Token (для загрузки файлов):</p>
+      <div id="tabToken">
+        <p>Войти может только владелец аккаунта <code>lucifermornngstar52-cell</code>. Введите свой Personal Access Token:</p>
         <input type="password" id="githubToken" placeholder="ghp_..." onkeypress="if(event.key==='Enter')loginWithToken()">
-        <button class="btn-primary" onclick="loginWithToken()">Войти с Token</button>
+        <button class="btn-primary" onclick="loginWithToken()">Войти</button>
       </div>
       <p class="admin-hint" id="adminHint"></p>
     </div>
