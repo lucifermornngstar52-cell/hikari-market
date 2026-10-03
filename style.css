@@ -1019,3 +1019,18 @@ body::after {
   .feat-shot { flex: none; width: min(280px, 80%); }
   .feat-text { text-align: left; }
 }
+
+/* ===== АНИМАЦИЯ ПОЯВЛЕНИЯ ПРИ СКРОЛЛЕ ===== */
+.rise {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.rise.in { opacity: 1; transform: none; }
+
+.feat-row .feat-shot.rise.in { transition-delay: 0.12s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise { opacity: 1; transform: none; transition: none; }
+}
