@@ -425,8 +425,10 @@ async function activateKey() {
   try {
     const resp = await fetch('keys.json?t=' + Date.now());
     const data = resp.ok ? await resp.json() : { keys: [] };
-    const keys = (data.keys || []).map(k => String(k).toUpperCase());
-    if (keys.includes(code)) {
+    const keys = (data.keys || []).map(k => String(k).trim());
+    const codeHash = await hashKey(code);
+    // новый формат: хэши; старые ключи (открытым текстом) тоже принимаем
+    if (keys.includes(codeHash) || keys.map(k => k.toUpperCase()).includes(code)) {
       localStorage.setItem('hkm_paid_' + window._modalProject.id, '1');
       document.getElementById('modalActions').innerHTML = window._modalDlBtn;
       notifyKeyActivation(code);
@@ -473,6 +475,13 @@ function genKey() {
   for (let i = 0; i < 6; i++) k += chars[Math.floor(Math.random() * chars.length)];
   return 'HK-' + k;
 }
+
+// Хэширование ключей: в публичном keys.json хранятся только SHA-256 хэши
+async function hashKey(code) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(code).trim().toUpperCase()));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+const isHashedKey = k => /^[a-f0-9]{64}$/.test(String(k).trim());
 async function renderKeys() {
   const list = document.getElementById('adminKeysList');
   const hint = document.getElementById('keysHint');
@@ -484,7 +493,10 @@ async function renderKeys() {
   try {
     const { keys } = await fetchKeysFile();
     list.innerHTML = keys.length
-      ? keys.map(k => `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--card,#161626);border:1px solid rgba(123,97,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px;"><code style="color:#fff;font-size:15px;letter-spacing:1px;">${k}</code><button class="btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="deleteKey('${k}')">🗑</button></div>`).join('')
+      ? keys.map(k => {
+          const shown = isHashedKey(k) ? '🔒 ' + k.slice(0, 10) + '…' : k;
+          return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--card,#161626);border:1px solid rgba(123,97,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px;"><code style="color:#fff;font-size:15px;letter-spacing:1px;">${shown}</code><button class="btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="deleteKey('${k}')">🗑</button></div>`;
+        }).join('')
       : '<p style="color:var(--text2,#9a9ab0);font-size:13px;">Ключей пока нет.</p>';
     hint.textContent = '';
   } catch (e) {
@@ -501,9 +513,9 @@ async function createKey() {
     hint.textContent = 'Создание ключа...';
     const { keys, sha } = await fetchKeysFile();
     const key = genKey();
-    keys.push(key);
+    keys.push(await hashKey(key));
     await saveKeysFile(keys, sha);
-    hint.textContent = '✅ Ключ создан: ' + key + ' — отправь его покупателю.';
+    hint.textContent = '✅ Ключ создан: ' + key + ' — отправь его покупателю (код показывается один раз, в файле хранится только хэш).';
     renderKeys();
   } catch (e) {
     hint.textContent = '❌ Ошибка: ' + e.message;
@@ -518,6 +530,27 @@ async function deleteKey(k) {
     renderKeys();
   } catch (e) {
     document.getElementById('keysHint').textContent = '❌ Ошибка: ' + e.message;
+  }
+}
+
+async function deleteKeyByCode() {
+  const code = (document.getElementById('delKeyCodeInput') || {}).value || '';
+  const hint = document.getElementById('keysHint');
+  if (!code.trim()) return;
+  try {
+    const { keys, sha } = await fetchKeysFile();
+    const codeHash = await hashKey(code);
+    const idx = keys.findIndex(k => k === codeHash || String(k).toUpperCase() === code.trim().toUpperCase());
+    if (idx !== -1) {
+      keys.splice(idx, 1);
+      await saveKeysFile(keys, sha);
+      hint.textContent = '✅ Ключ удалён.';
+    } else {
+      hint.textContent = '❌ Такой ключ не найден.';
+    }
+    renderKeys();
+  } catch (e) {
+    hint.textContent = '❌ Ошибка: ' + e.message;
   }
 }
 
@@ -553,7 +586,7 @@ function notifyKeyActivation(code) {
   try {
     fetch('https://ntfy.sh/hikari-keys-x7k2m9v4q8', {
       method: 'POST',
-      body: '🔑 Ключ ' + code + ' активирован — удали его в админке, чтобы не слили'
+      body: '🔑 Ключ ' + code + ' активирован — удали его в админке через «Удалить по коду»'
     }).catch(() => {});
   } catch (e) {}
 }

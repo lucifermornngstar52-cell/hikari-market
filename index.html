@@ -125,6 +125,10 @@
           <p style="color:var(--text2,#9a9ab0);font-size:13px;">Проверь оплату (скрин перевода от покупателя), затем создай ключ и отправь его покупателю.</p>
           <p style="color:var(--text2,#9a9ab0);font-size:12px;">🔔 Установи приложение <a href="https://ntfy.sh" target="_blank" style="color:var(--p,#7c3aed);">ntfy</a> и подпишись на топик <code>hikari-keys-x7k2m9v4q8</code> — придёт пуш при каждой активации ключа. После активации удали ключ кнопкой 🗑, тогда утечка ключа в сеть будет не страшна.</p>
           <button class="btn-primary" style="margin-top:10px;" onclick="createKey()">➕ Создать ключ</button>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+            <input id="delKeyCodeInput" placeholder="Удалить ключ по коду (HK-XXXXXX)" style="flex:1;min-width:200px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:10px 14px;color:#fff;font-size:13px;">
+            <button class="btn-secondary" onclick="deleteKeyByCode()">🗑 Удалить по коду</button>
+          </div>
 
           <hr class="admin-divider" style="margin-top:20px;">
           <h3 style="margin-top:16px;">Код активации приложения</h3>
