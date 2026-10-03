@@ -51,10 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupNavFilters() {
-  document.querySelectorAll('.nav-link').forEach(link => {
+  document.querySelectorAll('.nav-link[data-filter]').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelectorAll('.nav-link[data-filter]').forEach(l => l.classList.remove('active'));
       link.classList.add('active');
       currentFilter = link.dataset.filter;
       renderProjects();
