@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HikariOS — Marketplace</title>
+<title>Aika Assistant — HikariOS</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -23,154 +23,104 @@
 <!-- HEADER -->
 <header class="header">
   <div class="header-inner">
-    <div class="logo" onclick="window.location.href='/'">
+    <div class="logo" onclick="window.location.href='market.html'">
       <div class="logo-icon">◐</div>
       <span>Hikari<b>OS</b></span>
     </div>
     <nav class="nav">
-      <a href="#" class="nav-link active" data-filter="all">Все</a>
-      <a href="#" class="nav-link" data-filter="app">Приложения</a>
-      <a href="#" class="nav-link" data-filter="game">Игры</a>
-      <a href="#" class="nav-link" data-filter="tool">Инструменты</a>
-      <a href="features.html" class="nav-link">Возможности</a>
-      <a href="install.html" class="nav-link">Инструкция</a>
+      <a href="market.html" class="nav-link">Маркет →</a>
     </nav>
-    <button class="admin-btn" onclick="toggleAdmin()" title="Управление">⚙️</button>
   </div>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <h1>Hikari<span class="accent">OS</span> Marketplace</h1>
-  <p>Эксклюзивные приложения и игры от разработчика HikariOS. Скачивай, устанавливай, тестируй.</p>
-  <div class="hero-stats" id="heroStats">
-    <div class="stat"><span class="stat-num" id="statApps">—</span><span class="stat-label">проектов</span></div>
-    <div class="stat"><span class="stat-num" id="statDownloads">—</span><span class="stat-label">загрузок</span></div>
-    <div class="stat"><span class="stat-num" id="statLatest">—</span><span class="stat-label">последний релиз</span></div>
-  </div>
+  <h1 class="rise">Что умеет <span class="accent">Айка</span></h1>
+  <p class="rise">Живой персонаж-помощник, который всегда с тобой на телефоне. Вот что ты получаешь после установки.</p>
 </section>
 
-<!-- ADMIN PANEL -->
-<div class="admin-panel" id="adminPanel" style="display:none;">
-  <div class="admin-inner">
-    <div class="admin-header">
-      <h2>⚙️ Панель управления</h2>
-      <button class="close-btn" onclick="toggleAdmin()">✕</button>
-    </div>
-    
-    <!-- LOGIN (только токен владельца) -->
-    <div class="admin-login" id="adminLogin">
-      <div class="admin-tab-row">
-        <button class="admin-tab active">Вход по GitHub Token</button>
-      </div>
-      <div id="tabToken">
-        <p>Войти может только владелец аккаунта <code>lucifermornngstar52-cell</code>. Введите свой Personal Access Token:</p>
-        <input type="password" id="githubToken" placeholder="ghp_..." onkeypress="if(event.key==='Enter')loginWithToken()">
-        <button class="btn-primary" onclick="loginWithToken()">Войти</button>
-      </div>
-      <p class="admin-hint" id="adminHint"></p>
-    </div>
+<!-- ВОЗМОЖНОСТИ -->
+<main class="feat-main">
 
-    <!-- CONTENT -->
-    <div class="admin-content" id="adminContent" style="display:none;">
-      <div class="admin-tabs">
-        <button class="admin-tab active" onclick="adminSection('projects')">Проекты</button>
-        <button class="admin-tab" onclick="adminSection('keys')">Ключи доступа</button>
-      </div>
-
-      <!-- PROJECTS SECTION -->
-      <div id="secProjects" class="admin-section active">
-        <h3>Добавить проект</h3>
-        <div class="admin-form">
-          <div class="form-row">
-            <label>Название</label>
-            <input type="text" id="projName" placeholder="Aika Assistant">
-          </div>
-          <div class="form-row">
-            <label>Описание</label>
-            <textarea id="projDesc" placeholder="AI-ассистент для Android..."></textarea>
-          </div>
-          <div class="form-row">
-            <label>Категория</label>
-            <select id="projCategory">
-              <option value="app">Приложение</option>
-              <option value="game">Игра</option>
-              <option value="tool">Инструмент</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label>Иконка (emoji или URL)</label>
-            <input type="text" id="projIcon" placeholder="🤖 или https://...">
-          </div>
-          <div class="form-row">
-            <label>GitHub репозиторий (user/repo)</label>
-            <input type="text" id="projRepo" placeholder="user/repo">
-          </div>
-          <div class="form-row">
-            <label>Платформы (через запятую)</label>
-            <input type="text" id="projPlatforms" placeholder="android, windows">
-          </div>
-          <div class="form-row">
-            <label>Скриншоты (URL через запятую)</label>
-            <input type="text" id="projShots" placeholder="https://img1.png, https://img2.png">
-          </div>
-          <button class="btn-primary" onclick="addProject()">Добавить</button>
-        </div>
-        <hr class="admin-divider">
-        <h3>Существующие проекты</h3>
-        <div id="adminProjectList"></div>
-      </div>
-
-      <!-- KEYS SECTION -->
-      <div id="secKeys" style="display:none;">
-          <h3>Ключи доступа (подтверждение покупок)</h3>
-          <p style="color:var(--text2,#9a9ab0);font-size:13px;">Проверь оплату (скрин перевода от покупателя), затем создай ключ и отправь его покупателю.</p>
-          <p style="color:var(--text2,#9a9ab0);font-size:12px;">🔔 Установи приложение <a href="https://ntfy.sh" target="_blank" style="color:var(--p,#7c3aed);">ntfy</a> и подпишись на топик <code>hikari-keys-x7k2m9v4q8</code> — придёт пуш при каждой активации ключа. После активации удали ключ кнопкой 🗑, тогда утечка ключа в сеть будет не страшна.</p>
-          <button class="btn-primary" style="margin-top:10px;" onclick="createKey()">➕ Создать ключ</button>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-            <input id="delKeyCodeInput" placeholder="Удалить ключ по коду (HK-XXXXXX)" style="flex:1;min-width:200px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:10px 14px;color:#fff;font-size:13px;">
-            <button class="btn-secondary" onclick="deleteKeyByCode()">🗑 Удалить по коду</button>
-          </div>
-
-          <hr class="admin-divider" style="margin-top:20px;">
-          <h3 style="margin-top:16px;">Код активации приложения</h3>
-          <p style="color:var(--text2,#9a9ab0);font-size:13px;">Для активации Aika на телефоне покупателя: покупатель присылает ID устройства (с экрана активации в приложении), ты вставляешь его сюда и отправляешь покупателю полученный код. Работает без GitHub Token.</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-            <input id="devIdInput" placeholder="ID устройства (12 символов)" style="flex:1;min-width:200px;background:var(--card,#161626);border:1px solid rgba(123,97,255,.3);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;letter-spacing:1px;">
-            <button class="btn-primary" onclick="generateActivationCode()">⚡ Сгенерировать</button>
-          </div>
-          <p id="activationCodeOut" style="font-size:20px;font-weight:700;letter-spacing:2px;margin-top:12px;color:#fff;"></p>
-          <div id="akHistory" style="margin-top:10px;"></div>
-          <p id="keysHint" style="color:var(--text2,#9a9ab0);font-size:12px;margin-top:10px;"></p>
-          <div id="adminKeysList" style="margin-top:14px;"></div>
-        </div>
+  <div class="feat-row">
+    <div class="feat-shot rise"><img src="img/chat.jpg" alt="Главный экран чата с Айкой" loading="lazy"></div>
+    <div class="feat-text rise">
+      <div class="inst-label">Возможность первая</div>
+      <h3>Обычный чат, только живой</h3>
+      <p>Пишешь Айке как другу в мессенджере — она отвечает. Можно говорить голосом вместо набора текста, она услышит.</p>
+      <p>Отправишь ей фото или картинку с камеры — она посмотрит и расскажет, что на ней. И да: она сама говорит вслух, читать не обязательно.</p>
     </div>
   </div>
-</div>
 
-<!-- PROJECTS -->
-<div class="section-title">
-  <h2>Все проекты</h2>
-  <p>Нажми на карточку для подробностей и скачивания</p>
-</div>
-
-<main class="main">
-  <div class="projects-grid" id="projectsGrid">
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Загрузка...</p>
+  <div class="feat-row feat-rev">
+    <div class="feat-shot rise"><img src="img/overlay.jpg" alt="Персонаж поверх другого приложения" loading="lazy"></div>
+    <div class="feat-text rise">
+      <div class="inst-label">Возможность вторая</div>
+      <h3>Висит поверх всего</h3>
+      <p>Айку не нужно держать открытой. Она плавает поверх любых приложений: смотришь видео, листаешь соцсети, играешь — она остаётся на экране рядом.</p>
+      <p>Её можно перетаскивать пальцем, куда захочешь. Убрать — одним движением.</p>
     </div>
   </div>
+
+  <div class="feat-row">
+    <div class="feat-shot rise"><img src="img/character.jpg" alt="Выбор характера персонажа" loading="lazy"></div>
+    <div class="feat-text rise">
+      <div class="inst-label">Возможность третья</div>
+      <h3>Выбери ей характер</h3>
+      <p>Милая и ласковая? Колючая цундере, что ворчит, но помогает? Холодная умница или даже яндере?</p>
+      <p>Персонажей много, и от выбора зависит, как Айка с тобой разговаривает: каким тоном отвечает, что шутит и как себя ведёт. Надоел один — смени в любой момент.</p>
+    </div>
+  </div>
+
+  <div class="feat-row feat-rev">
+    <div class="feat-shot rise"><img src="img/voice.jpg" alt="Выбор голоса" loading="lazy"></div>
+    <div class="feat-text rise">
+      <div class="inst-label">Возможность четвёртая</div>
+      <h3>Голос на твой вкус</h3>
+      <p>Несколько голосов на выбор: женские и мужские, русские и английские. Каждый можно послушать прямо перед выбором.</p>
+      <p>Не нравится скорость речи или высота голоса? Подкручивается ползунками за секунду.</p>
+    </div>
+  </div>
+
+  <div class="feat-row">
+    <div class="feat-shot rise"><img src="img/model.jpg" alt="Выбор внешности персонажа" loading="lazy"></div>
+    <div class="feat-text rise">
+      <div class="inst-label">Возможность пятая</div>
+      <h3>Разная внешность</h3>
+      <p>Несколько готовых персонажей — каждый со своим лицом, одеждой и характером движений.</p>
+      <p>Они не картинки: персонажи моргают, дышат, двигаются. Ведут себя живо, пока ты с ними общаешься.</p>
+    </div>
+  </div>
+
+  <div class="feat-row feat-rev">
+    <div class="feat-shot rise"><img src="img/background.jpg" alt="Выбор фона чата" loading="lazy"></div>
+    <div class="feat-text rise">
+      <div class="inst-label">Возможность шестая</div>
+      <h3>Фон под настроение</h3>
+      <p>Чат можно оформить: готовые фоны — закат, океан, сакура, киберпанк и другие.</p>
+      <p>Хочешь своё? Ставь любую картинку из галереи телефона.</p>
+    </div>
+  </div>
+
+  <div class="feat-row">
+    <div class="feat-shot rise"><img src="img/pilot.jpg" alt="Майнкрафт-пилот" loading="lazy"></div>
+    <div class="feat-text rise">
+      <div class="inst-label">Возможность седьмая</div>
+      <h3>Сама играет в Майнкрафт</h3>
+      <p>Говоришь Айке, что сделать — например, «наруби дерева» или «прокопайся вниз». Дальше она смотрит на экран игры и играет за тебя: ходит, ломает блоки, выполняет цель.</p>
+      <p>Панель управления висит прямо поверх игры. Телефон можно просто положить и смотреть, как она справляется.</p>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="inst-cta rise">
+    <h3>Хочешь такую же</h3>
+    <p>Айка ждёт на маркете. Оплата один раз, доступ навсегда.</p>
+    <a class="inst-cta-btn" href="market.html">Скачать Aika Assistant</a>
+    <p style="margin-top:14px;margin-bottom:0;font-size:13px;color:var(--text-dim);">Как установить — <a href="install.html" style="color:var(--accent);">инструкция в 7 шагах</a></p>
+  </div>
+
 </main>
-
-<!-- PROJECT MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modalContent"></div>
-  </div>
-</div>
-
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -178,9 +128,24 @@
     <div class="logo-icon">◐</div>
     <span>Hikari<b>OS</b></span>
   </div>
-  <p>© 2026 HikariOS · <a href="install.html" style="color:var(--text-mid);text-decoration:none;">Инструкция по установке</a></p>
+  <p>© 2026 HikariOS</p>
 </footer>
 
-<script src="app.js?v=13"></script>
+<script>
+(function () {
+  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.rise');
+  if (RM || !('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.2 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>
