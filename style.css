@@ -34,6 +34,101 @@ body::before {
   z-index: 0;
 }
 
+/* SMOKE BACKGROUND — фиолетовый переливающийся дым */
+.smoke {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  filter: hue-rotate(0deg);
+  animation: smoke-hue 26s ease-in-out infinite alternate;
+}
+
+.smoke-puff {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.45;
+  will-change: transform, opacity;
+}
+
+.smoke-puff.s1 {
+  width: 55vmax; height: 55vmax;
+  top: -18%; left: -12%;
+  background: radial-gradient(circle at 35% 35%, #1c0f33 0%, #0d0718 55%, transparent 75%);
+  animation: drift1 34s ease-in-out infinite alternate;
+}
+.smoke-puff.s2 {
+  width: 50vmax; height: 50vmax;
+  top: -8%; right: -18%;
+  background: radial-gradient(circle at 60% 40%, #4c1d95 0%, #170b2e 55%, transparent 75%);
+  animation: drift2 42s ease-in-out infinite alternate;
+}
+.smoke-puff.s3 {
+  width: 60vmax; height: 60vmax;
+  bottom: -25%; left: -10%;
+  background: radial-gradient(circle at 45% 55%, #2e1065 0%, #12071f 55%, transparent 78%);
+  animation: drift3 38s ease-in-out infinite alternate;
+}
+.smoke-puff.s4 {
+  width: 42vmax; height: 42vmax;
+  bottom: -12%; right: -10%;
+  background: radial-gradient(circle at 50% 50%, #6d28d9 0%, #1e0a3c 55%, transparent 72%);
+  animation: drift4 29s ease-in-out infinite alternate;
+}
+.smoke-puff.s5 {
+  width: 36vmax; height: 36vmax;
+  top: 32%; left: 30%;
+  background: radial-gradient(circle at 50% 50%, #8b5cf6 0%, #3b1278 50%, transparent 70%);
+  opacity: 0.22;
+  animation: drift5 47s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.40; }
+  50%  { transform: translate(9vw, 6vh) scale(1.15); opacity: 0.55; }
+  100% { transform: translate(-4vw, 12vh) scale(0.9); opacity: 0.35; }
+}
+@keyframes drift2 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.35; }
+  50%  { transform: translate(-8vw, 10vh) scale(1.1); opacity: 0.5; }
+  100% { transform: translate(5vw, -6vh) scale(1.2); opacity: 0.4; }
+}
+@keyframes drift3 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.45; }
+  50%  { transform: translate(12vw, -8vh) scale(1.12); opacity: 0.3; }
+  100% { transform: translate(-7vw, -3vh) scale(0.95); opacity: 0.5; }
+}
+@keyframes drift4 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  50%  { transform: translate(-10vw, -9vh) scale(1.18); opacity: 0.45; }
+  100% { transform: translate(6vw, 5vh) scale(0.92); opacity: 0.35; }
+}
+@keyframes drift5 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.12; }
+  50%  { transform: translate(-14vw, 8vh) scale(1.3); opacity: 0.3; }
+  100% { transform: translate(10vw, -10vh) scale(0.85); opacity: 0.18; }
+}
+
+/* Перелив оттенков: чёрный → тёмный → светлый фиолет */
+@keyframes smoke-hue {
+  0%   { filter: hue-rotate(0deg) brightness(0.9); }
+  50%  { filter: hue-rotate(-18deg) brightness(1.08); }
+  100% { filter: hue-rotate(10deg) brightness(0.85); }
+}
+
+/* Мягкий дым без потери производительности: на слабых устройствах */
+@media (max-width: 600px) {
+  .smoke-puff { filter: blur(50px); }
+  .smoke-puff.s5 { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smoke-puff { animation: none; }
+  .smoke { animation: none; }
+}
+
 /* GLOW */
 body::after {
   content: '';
