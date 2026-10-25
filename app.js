@@ -36,6 +36,26 @@ const DEFAULT_PROJECTS = [
     auto: false,
     platforms: ['android', 'windows']
   },
+  {
+    id: 'default_hikarios',
+    name: 'HikariOS',
+    desc: 'Мини-операционная система для планшета ZIK W1027: окна в духе Windows 11 с эффектом Liquid Glass, файлы, терминал, редактор кода, браузер, ИИ-чат и запуск собственных HTML-приложений на весь экран. В комплекте Hikari Remote: телефон становится клавиатурой и мышью по Wi-Fi.',
+    category: 'app',
+    icon: 'hikarios-icon.svg',
+    repo: 'lucifermornngstar52-cell/zik-os',
+    version: '3.1',
+    url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.1/HikariOS-3.1.apk',
+    date: '2026-08-01T00:00:00Z',
+    downloads: 0,
+    shots: [],
+    auto: false,
+    free: true,
+    platforms: ['android', 'web'],
+    allAssets: [
+      { name: 'HikariOS-3.1.apk (планшет)', url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.1/HikariOS-3.1.apk', size: 149283, downloads: 0 },
+      { name: 'HikariRemote-1.2.apk (телефон)', url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.2/HikariRemote-1.2.apk', size: 24340, downloads: 0 }
+    ]
+  },
 ];
 
 // ===== STATE =====
@@ -294,7 +314,7 @@ function openModal(id) {
   const paid = localStorage.getItem('hkm_paid_' + p.id);
   const actionsHtml = !hasFiles
     ? `<button class="btn-primary" disabled>Файл недоступен</button>`
-    : paid
+    : (p.free || paid)
       ? window._modalDlBtn
       : `<button class="btn-primary" onclick="showPaymentStep()">Купить за 1 000 ₸</button>`;
 
