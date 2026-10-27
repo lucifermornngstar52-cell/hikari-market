@@ -43,8 +43,8 @@ const DEFAULT_PROJECTS = [
     category: 'app',
     icon: 'hikarios-icon.svg',
     repo: 'lucifermornngstar52-cell/zik-os',
-    version: '3.1',
-    url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.1/HikariOS-3.1.apk',
+    version: '3.2',
+    url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.3/HikariOS-3.2.apk',
     date: '2026-08-01T00:00:00Z',
     downloads: 0,
     shots: [],
@@ -52,7 +52,7 @@ const DEFAULT_PROJECTS = [
     free: true,
     platforms: ['android', 'web'],
     allAssets: [
-      { name: 'HikariOS-3.1.apk (планшет)', url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.1/HikariOS-3.1.apk', size: 149283, downloads: 0 },
+      { name: 'HikariOS-3.1.apk (планшет)', url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.3/HikariOS-3.2.apk', size: 149283, downloads: 0 },
       { name: 'HikariRemote-1.2.apk (телефон)', url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.2/HikariRemote-1.2.apk', size: 24340, downloads: 0 }
     ]
   },
@@ -64,7 +64,7 @@ const DEFAULT_PROJECTS = [
     icon: '🪓',
     repo: 'lucifermornngstar52-cell/rustlite',
     version: 'v7',
-    url: 'https://github.com/lucifermornngstar52-cell/rustlite/releases/download/v7/RustLite.apk',
+    url: 'https://github.com/lucifermornngstar52-cell/rustlite/releases/download/v8/RustLite.apk',
     date: '2026-09-25T12:00:00Z',
     downloads: 0,
     shots: [],
