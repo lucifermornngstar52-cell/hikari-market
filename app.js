@@ -56,6 +56,40 @@ const DEFAULT_PROJECTS = [
       { name: 'HikariRemote-1.2.apk (телефон)', url: 'https://github.com/lucifermornngstar52-cell/zik-os/releases/download/v3.2/HikariRemote-1.2.apk', size: 24340, downloads: 0 }
     ]
   },
+  {
+    id: 'default_rustlite',
+    name: 'Rust Lite',
+    desc: 'Выживание в стиле Rust: добыча ресурсов, охота, крафт, постройка базы и выживание ночью. Управление под телефон и планшет, работает офлайн.',
+    category: 'game',
+    icon: '🪓',
+    repo: 'lucifermornngstar52-cell/rustlite',
+    version: 'v7',
+    url: 'https://github.com/lucifermornngstar52-cell/rustlite/releases/download/v7/RustLite.apk',
+    date: '2026-09-25T12:00:00Z',
+    downloads: 0,
+    shots: [],
+    auto: false,
+    free: true,
+    platforms: ['android'],
+    webUrl: 'games/rustlite.html'
+  },
+  {
+    id: 'default_repolite',
+    name: 'REPO-lite',
+    desc: '3D кооп-хоррор в браузере по мотивам R.E.P.O.: собирай хрупкий лут, тащи его к точке эвакуации и беги от монстров. Совместная игра с другом через интернет.',
+    category: 'game',
+    icon: '🎭',
+    repo: 'lucifermornngstar52-cell/repo-lite',
+    version: 'v1',
+    url: 'https://github.com/lucifermornngstar52-cell/repo-lite/releases/download/v1/REPOLite.apk',
+    date: '2026-09-20T12:00:00Z',
+    downloads: 0,
+    shots: [],
+    auto: false,
+    free: true,
+    platforms: ['android', 'web'],
+    webUrl: 'games/repolite.html'
+  },
 ];
 
 // ===== STATE =====
@@ -318,6 +352,10 @@ function openModal(id) {
       ? window._modalDlBtn
       : `<button class="btn-primary" onclick="showPaymentStep()">Купить за 1 000 ₸</button>`;
 
+  const webBtn = p.webUrl
+    ? `<a href="${p.webUrl}" target="_blank" class="btn-primary" style="text-decoration:none;">Играть онлайн</a>`
+    : '';
+
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-icon">${iconHtml}</div>
     <h2>${p.name}</h2>
@@ -326,7 +364,7 @@ function openModal(id) {
     <p class="modal-desc">${p.desc}</p>
     ${shotsHtml}
     <div class="modal-actions" id="modalActions">
-      ${actionsHtml}
+      ${webBtn}${actionsHtml}
     </div>
   `;
 
